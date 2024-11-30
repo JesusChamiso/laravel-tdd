@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Repository;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -30,6 +31,20 @@ class RespositoryControllerTest extends TestCase {
             ->actingAs($user)
             ->post('repositories', $data)
             ->assertRedirect('/repositories');
+        $this->assertDatabaseHas('repositories', $data);
+    }
+
+    public function test_update() {
+        $repository = Repository::factory()->create();
+        $data = [
+            'url' => rtrim($this->faker->url),
+            'description' => $this->faker->text
+        ];
+        $user = User::factory()->create();
+        $this
+            ->actingAs($user)
+            ->put("repositories/$repository->id", $data)
+            ->assertRedirect(route('repositories.edit', $repository));
         $this->assertDatabaseHas('repositories', $data);
     }
 }
