@@ -30,7 +30,7 @@
                                 <td class="border px-4 py-2">{{ $repository->id }}</td>
                                 <td class="border px-4 py-2">{{ $repository->url }}</td>
                                 <td class="px-4 py-2">
-                                    <a href="{{ $repository->url }}">
+                                    <a href="{{ route('repositories.show', $repository->id) }}">
                                         Ver
                                     </a>
                                 </td>
