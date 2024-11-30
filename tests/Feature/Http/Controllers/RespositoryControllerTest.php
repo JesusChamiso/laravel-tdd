@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class RespositoryControllerTest extends TestCase {
@@ -46,5 +47,26 @@ class RespositoryControllerTest extends TestCase {
             ->put("repositories/$repository->id", $data)
             ->assertRedirect(route('repositories.edit', $repository));
         $this->assertDatabaseHas('repositories', $data);
+    }
+
+    //Validacion de la creacion y actualizacion
+
+    public function test_validate_store() {
+        $user = User::factory()->create();
+        $this
+            ->actingAs($user)
+            ->post('repositories', [])
+            ->assertStatus(Response::HTTP_FOUND)
+            ->assertSessionHasErrors(['url', 'description']);
+    }
+
+    public function test_validate_update() {
+        $repository = Repository::factory()->create();
+        $user = User::factory()->create();
+        $this
+            ->actingAs($user)
+            ->put("repositories/$repository->id", [])
+            ->assertStatus(Response::HTTP_FOUND)
+            ->assertSessionHasErrors(['url', 'description']);
     }
 }
