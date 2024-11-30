@@ -36,12 +36,12 @@ class RespositoryControllerTest extends TestCase {
     }
 
     public function test_update() {
-        $repository = Repository::factory()->create();
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create(['user_id' => $user->id]);
         $data = [
             'url' => rtrim($this->faker->url),
             'description' => $this->faker->text
         ];
-        $user = User::factory()->create();
         $this
             ->actingAs($user)
             ->put("repositories/$repository->id", $data)
@@ -80,5 +80,18 @@ class RespositoryControllerTest extends TestCase {
         $this->assertDatabaseMissing('repositories', [
             'id' => $repository->id
         ]);
+    }
+
+    public function test_update_policy() {
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create();
+        $data = [
+            'url' => rtrim($this->faker->url),
+            'description' => $this->faker->text
+        ];
+        $this
+            ->actingAs($user)
+            ->put("repositories/$repository->id", $data)
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Repository;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class RepositoryController extends Controller {
 
@@ -21,6 +22,9 @@ class RepositoryController extends Controller {
             'url' => 'required',
             'description' => 'required'
         ]);
+        if ($request->user()->id != $repository->user_id) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
         $repository->update($request->all());
         return redirect()->route('repositories.edit', $repository);
     }
