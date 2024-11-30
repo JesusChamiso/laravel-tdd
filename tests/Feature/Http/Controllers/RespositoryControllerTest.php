@@ -91,17 +91,6 @@ class RespositoryControllerTest extends TestCase {
             ->assertSessionHasErrors(['url', 'description']);
     }
 
-    public function test_destroy() {
-        $user = User::factory()->create();
-        $repository = Repository::factory()->create(['user_id' => $user->id]);
-        $this
-            ->actingAs($user)
-            ->delete("repositories/$repository->id")
-            ->assertRedirect(route('repositories.index'));
-        $this->assertDatabaseMissing('repositories', [
-            'id' => $repository->id
-        ]);
-    }
 
     public function test_update_policy() {
         $user = User::factory()->create();
@@ -115,12 +104,42 @@ class RespositoryControllerTest extends TestCase {
             ->put("repositories/$repository->id", $data)
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
+    public function test_destroy() {
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create(['user_id' => $user->id]);
+        $this
+            ->actingAs($user)
+            ->delete("repositories/$repository->id")
+            ->assertRedirect(route('repositories.index'));
+        $this->assertDatabaseMissing('repositories', [
+            'id' => $repository->id
+        ]);
+    }
     public function test_destroy_policy() {
         $user = User::factory()->create();
         $repository = Repository::factory()->create();
         $this
             ->actingAs($user)
             ->delete("repositories/$repository->id")
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_show() {
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create(['user_id' => $user->id]);
+        $this
+            ->actingAs($user)
+            ->get("repositories/$repository->id")
+            ->assertStatus(Response::HTTP_OK);
+    }
+
+
+    public function test_show_policy() {
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create();
+        $this
+            ->actingAs($user)
+            ->get("repositories/$repository->id")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }
