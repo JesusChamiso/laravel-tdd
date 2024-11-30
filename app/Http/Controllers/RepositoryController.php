@@ -29,7 +29,10 @@ class RepositoryController extends Controller {
         return redirect()->route('repositories.edit', $repository);
     }
 
-    public function destroy(Repository $repository) {
+    public function destroy(Repository $repository, Request $request) {
+        if ($request->user()->id != $repository->user_id) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
         $repository->delete();
         return redirect()->route('repositories.index');
     }
