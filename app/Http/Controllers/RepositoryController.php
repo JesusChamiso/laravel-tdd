@@ -19,6 +19,17 @@ class RepositoryController extends Controller {
         }
         return view('repositories.show', compact('repository'));
     }
+
+    public function edit(Request $request, Repository $repository) {
+        if ($request->user()->id != $repository->user_id) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+        return view('repositories.edit', compact('repository'));
+    }
+
+    public function create() {
+        return view('repositories.create');
+    }
     public function store(Request $request) {
         $request->validate([
             'url' => 'required',
