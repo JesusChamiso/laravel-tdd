@@ -43,6 +43,14 @@ class RespositoryControllerTest extends TestCase {
             ->assertSee($repository->id)
             ->assertSee($repository->url);
     }
+    public function test_create() {
+        $user = User::factory()->create();
+        $this
+            ->actingAs($user)
+            ->get("repositories/create")
+            ->assertStatus(Response::HTTP_OK);
+    }
+
     public function test_store() {
         $data = [
             'url' => rtrim($this->faker->url),
@@ -140,6 +148,27 @@ class RespositoryControllerTest extends TestCase {
         $this
             ->actingAs($user)
             ->get("repositories/$repository->id")
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function test_edit() {
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create(['user_id' => $user->id]);
+        $this
+            ->actingAs($user)
+            ->get("repositories/$repository->id/edit")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertSee($repository->url)
+            ->assertSee($repository->description);
+    }
+
+
+    public function test_edit_policy() {
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create();
+        $this
+            ->actingAs($user)
+            ->get("repositories/$repository->id/edit")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }
