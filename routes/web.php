@@ -17,5 +17,4 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::resource('repositories', RepositoryController::class)
-    ->middleware('auth');
+Route::resource('repositories', RepositoryController::class)->middleware('auth');
