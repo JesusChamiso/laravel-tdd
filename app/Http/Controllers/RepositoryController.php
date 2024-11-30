@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RepositoryRequest;
 use App\Models\Repository;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,20 +31,12 @@ class RepositoryController extends Controller {
     public function create() {
         return view('repositories.create');
     }
-    public function store(Request $request) {
-        $request->validate([
-            'url' => 'required',
-            'description' => 'required'
-        ]);
+    public function store(RepositoryRequest $request) {
         $request->user()->repositories()->create($request->all());
         return redirect()->route('repositories.index');
     }
 
-    public function update(Request $request, Repository $repository) {
-        $request->validate([
-            'url' => 'required',
-            'description' => 'required'
-        ]);
+    public function update(RepositoryRequest $request, Repository $repository) {
         if ($request->user()->id != $repository->user_id) {
             abort(Response::HTTP_FORBIDDEN);
         }
