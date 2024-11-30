@@ -69,4 +69,16 @@ class RespositoryControllerTest extends TestCase {
             ->assertStatus(Response::HTTP_FOUND)
             ->assertSessionHasErrors(['url', 'description']);
     }
+
+    public function test_destroy() {
+        $repository = Repository::factory()->create();
+        $user = User::factory()->create();
+        $this
+            ->actingAs($user)
+            ->delete("repositories/$repository->id")
+            ->assertRedirect(route('repositories.index'));
+        $this->assertDatabaseMissing('repositories', [
+            'id' => $repository->id
+        ]);
+    }
 }
