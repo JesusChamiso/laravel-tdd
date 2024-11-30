@@ -8,6 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RepositoryController extends Controller {
 
+
+    public function index(Request $request) {
+        return view('repositories.index', ['repositories' => $request->user()->repositories]);
+    }
     public function store(Request $request) {
         $request->validate([
             'url' => 'required',
