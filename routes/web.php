@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\RepositoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [PageController::class, 'home']);
 
 Route::middleware([
     'auth:sanctum',
@@ -15,3 +15,5 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+Route::resource('repositories', RepositoryController::class)->middleware('auth');
